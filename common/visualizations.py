@@ -7,7 +7,7 @@ class MetricsView():
     def __init__(self, history):
         '''
         Args:
-            history: dictionary containing model training metrics per epoch
+            history: pandas DataFrame containing model training metrics per epoch
         '''
         self.history = history
 
@@ -53,12 +53,12 @@ class MetricsView():
         test_plot = None
         for i, name in enumerate(metrics):
             axes[i].set_title(name)
-            if name in self.history:
-                epoch = [i + 1 for i in range(len(self.history[name]))]
-                train_plot, = axes[i].plot(epoch, self.history[name], color='#3399ff')
+            if name in self.history.columns:
+                epochs = self.history.index + 1
+                train_plot, = axes[i].plot(epochs, self.history[name], color='#3399ff')
                 val_name = 'val_' + name
-                if val_name in self.history:
-                    test_plot, = axes[i].plot(epoch, self.history[val_name], color='#ff9933')
+                if val_name in self.history.columns:
+                    test_plot, = axes[i].plot(epochs, self.history[val_name], color='#ff9933')
 
         # set up the legend
         legend_handles = [h for h in [train_plot, test_plot] if h is not None]
