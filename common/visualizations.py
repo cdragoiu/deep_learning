@@ -1,5 +1,6 @@
 import math
 import matplotlib.pyplot as plt
+import matplotlib.ticker as tkr
 
 class MetricsView():
     ''' Visualization of model evalution metrics. '''
@@ -53,6 +54,7 @@ class MetricsView():
         test_plot = None
         for i, name in enumerate(metrics):
             axes[i].set_title(name)
+            axes[i].xaxis.set_major_locator(tkr.MaxNLocator(integer=True))
             if name in self.history.columns:
                 epochs = self.history.index + 1
                 train_plot, = axes[i].plot(epochs, self.history[name], color='#3399ff')
