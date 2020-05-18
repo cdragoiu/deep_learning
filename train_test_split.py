@@ -1,4 +1,7 @@
+#!/usr/local/bin/python3
+
 import os, random, shutil
+from argparse import ArgumentParser
 
 def train_test_split(path, ratio):
     '''
@@ -48,3 +51,24 @@ def train_test_split(path, ratio):
                     continue
 
                 os.symlink(test_name, test_name.replace(abs_path, abs_path + '/' + dir))
+
+if __name__ == '__main__':
+
+    # set up command-line options
+    parser = ArgumentParser(
+        description='Split files into train and test based on the split ratio.',
+        add_help=False
+    )
+    parser.add_argument('positional', metavar='path', nargs=1,
+        help='location of files to process (subfolders are considered image classes)'
+    )
+    required = parser.add_argument_group('required arguments')
+    required.add_argument('-r', '--ratio', metavar='value', type=float, required=True,
+        help='split ratio'
+    )
+    optional = parser.add_argument_group('optional arguments')
+    optional.add_argument('-h', '--help', action='help', help='show this help message and exit')
+    args = parser.parse_args()
+
+    # split files
+    train_test_split(args.positional[0], args.ratio)
