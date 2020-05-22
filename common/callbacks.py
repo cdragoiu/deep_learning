@@ -1,4 +1,5 @@
 from tensorflow.keras.callbacks import Callback
+from termcolor import colored
 
 class StopTraining(Callback):
     ''' Callback to stop the training of the selected model. '''
@@ -18,7 +19,8 @@ class StopTraining(Callback):
 
         try:
             if logs[self.metric] > self.threshold:
-                print('\n\ninfo: stopping training : {} > {}\n'.format(self.metric, self.threshold))
+                print(colored('\ninfo: stopping training : {} > {}', 'green').format(
+                    self.metric, self.threshold))
                 self.model.stop_training = True
         except KeyError:
-            print('\n\nwarning: StopTraining callback failed...metric not present\n')
+            print(colored('\nwarning: StopTraining callback failed...metric not present', 'blue'))

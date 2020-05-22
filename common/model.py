@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from termcolor import colored
 from common.visualizations import MetricsView
 
 class Model:
@@ -20,28 +21,16 @@ class Model:
 
     def check_dirs(self, dirs):
         '''
-        Check if path is set and given directories exist.
+        Check if given directories exist.
         Args:
             dirs: list of directories to check (relative to set path)
         '''
 
-        if self.path == None:
-            print('error: please set model path first')
-            exit()
         for dir in dirs:
             dir = self.path + dir
             if not os.path.isdir(dir):
-                print('error: "{}" not found'.format(dir))
+                print(colored('error: "{}" not found', 'magenta').format(dir))
                 exit()
-
-    def set_path(self, path):
-        ''' Set path to model data. '''
-
-        if os.path.isdir(path):
-            self.path = path if path.endswith('/') else path + '/'
-        else:
-            print('error: "{}" not found'.format(path))
-            exit()
 
     def save(self):
         ''' Save model weights and history using the provided path. '''
@@ -61,18 +50,21 @@ class Model:
         if os.path.isfile(file_name):
             self.model.load_weights(file_name)
         else:
-            print('warning: "{}" not found'.format(file_name))
+            print(colored('warning: "{}" not found', 'blue').format(file_name))
 
         # load training history
         file_name = self.path + '../history.h5'
         if os.path.isfile(file_name):
             self.history = pd.read_hdf(file_name)
         else:
-            print('warning: "{}" not found'.format(file_name))
+            print(colored('warning: "{}" not found', 'blue').format(file_name))
 
     def display(self):
         ''' Display model evaluation metrics. '''
 
+        if self.history.empty:
+            print(colored('warning: nothing to display...empty history', 'blue'))
+            return
         metrics_view = MetricsView(self.history)
         metrics = [m.name for m in self.metrics]
         metrics.insert(0, 'loss')

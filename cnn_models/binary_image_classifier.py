@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import tensorflow.keras as keras
+from termcolor import colored
 from common.callbacks import StopTraining
 from common.image_generators import ImageDataFromDisk
 from common.model import Model
@@ -9,10 +10,22 @@ from common.model import Model
 class BinaryImageClassifier(Model):
     ''' A CNN based binary image classifier. '''
 
-    def __init__(self):
-        ''' Initialize and compile model. '''
+    def __init__(self, path):
+        '''
+        Initialize and compile model.
+        Args:
+            path: top level location of images on disk with proper folder structure
+        '''
 
+        Model.__init__(self)
         self.image_size = (150, 150)  # pixels
+
+        # set path to model data
+        if os.path.isdir(path):
+            self.path = path if path.endswith('/') else path + '/'
+        else:
+            print(colored('error: "{}" not found', 'magenta').format(path))
+            exit()
 
         # define model
         self.model = keras.models.Sequential([

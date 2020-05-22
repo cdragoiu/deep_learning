@@ -2,6 +2,7 @@
 
 import os, random, shutil
 from argparse import ArgumentParser
+from termcolor import colored
 
 def train_test_split(path, ratio):
     '''
@@ -32,7 +33,7 @@ def train_test_split(path, ratio):
             for dir in dir_names:
                 os.makedirs(abs_path + '/' + dir + '/' + class_name)
         except OSError:
-            print('error: unable to create folder structure')
+            print(colored('error: unable to create folder structure', 'magenta'))
 
         # randomize file selection
         split_files = {}
@@ -47,7 +48,7 @@ def train_test_split(path, ratio):
 
                 # skip empty files
                 if os.path.getsize(test_name) == 0:
-                    print('warning: file "' + name + '" is empty')
+                    print(colored('warning: file "{}" is empty', 'blue').format(name))
                     continue
 
                 os.symlink(test_name, test_name.replace(abs_path, abs_path + '/' + dir))
