@@ -9,14 +9,9 @@ from common.model import Model
 class BinaryImageClassifier(Model):
     ''' A CNN based binary image classifier. '''
 
-    def __init__(self, path):
-        '''
-        Initialize and compile model.
-        Args:
-            path: top level location of images on disk with proper folder structure
-        '''
+    def __init__(self):
+        ''' Initialize and compile model. '''
 
-        self.path = path.rstrip('/')
         self.image_size = (150, 150)  # pixels
 
         # define model
@@ -73,9 +68,13 @@ class BinaryImageClassifier(Model):
     def train(self):
         ''' Train model using predefined train and test image generators. '''
 
+        # check if train and test folders are present (relative to set path)
+        dirs = ['train', 'test']
+        self.check_dirs(dirs)
+
         # define train image generator with on the fly image augmentation
         train_data = ImageDataFromDisk(
-            path=self.path + '/train',
+            path=self.path + dirs[0],
             target_size=self.image_size,
             class_mode='binary',
             batch_size=100,
@@ -84,7 +83,7 @@ class BinaryImageClassifier(Model):
 
         # define test image generator
         test_data = ImageDataFromDisk(
-            path=self.path + '/test',
+            path=self.path + dirs[1],
             target_size=self.image_size,
             class_mode='binary',
             batch_size=100,
@@ -106,11 +105,15 @@ class BinaryImageClassifier(Model):
     def predict(self):
         ''' Predict image classes for all images in "../predict" folder. '''
 
+        # check if train and predict folders are present (relative to set path)
+        dirs = ['train', '../predict']
+        self.check_dirs(dirs)
+
         # read image classes
-        train_classes = os.listdir(self.path + '/train')
+        train_classes = os.listdir(self.path + dirs[0])
 
         # loop over found images
-        predict_path = self.path + '/../predict'
+        predict_path = self.path + dirs[1]
         for img_name in os.listdir(predict_path):
 
             # process image

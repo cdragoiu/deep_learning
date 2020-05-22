@@ -18,23 +18,57 @@ class Model:
         self.model = None
         self.metrics = []
 
+    def check_dirs(self, dirs):
+        '''
+        Check if path is set and given directories exist.
+        Args:
+            dirs: list of directories to check (relative to set path)
+        '''
+
+        if self.path == None:
+            print('error: please set model path first')
+            exit()
+        for dir in dirs:
+            dir = self.path + dir
+            if not os.path.isdir(dir):
+                print('error: "{}" not found'.format(dir))
+                exit()
+
     def set_path(self, path):
-        ''' Check and set path to model data. '''
+        ''' Set path to model data. '''
 
         if os.path.isdir(path):
-            self.path = path.rstrip('/')
+            self.path = path if path.endswith('/') else path + '/'
+        else:
+            print('error: "{}" not found'.format(path))
+            exit()
 
     def save(self):
         ''' Save model weights and history using the provided path. '''
 
-        self.model.save_weights(self.path + '/../weights.h5')
-        self.history.to_hdf(self.path + '/../history.h5', key='history')
+        self.check_dirs(['..'])
+
+        self.model.save_weights(self.path + '../weights.h5')
+        self.history.to_hdf(self.path + '../history.h5', key='history')
 
     def load(self):
         ''' Load model weights and history using the provided path. '''
 
-        self.model.load_weights(self.path + '/../weights.h5')
-        self.history = pd.read_hdf(self.path + '/../history.h5')
+        self.check_dirs(['..'])
+
+        # load model weights
+        file_name = self.path + '../weights.h5'
+        if os.path.isfile(file_name):
+            self.model.load_weights(file_name)
+        else:
+            print('warning: "{}" not found'.format(file_name))
+
+        # load training history
+        file_name = self.path + '../history.h5'
+        if os.path.isfile(file_name):
+            self.history = pd.read_hdf(file_name)
+        else:
+            print('warning: "{}" not found'.format(file_name))
 
     def display(self):
         ''' Display model evaluation metrics. '''
