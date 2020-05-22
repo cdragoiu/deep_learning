@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from common.visualizations import MetricsView
 
@@ -12,10 +13,16 @@ class Model:
         metrics: placeholder for model training metrics
         '''
 
-        self.path = ''
+        self.path = None
         self.history = pd.DataFrame()
         self.model = None
         self.metrics = []
+
+    def set_path(self, path):
+        ''' Check and set path to model data. '''
+
+        if os.path.isdir(path):
+            self.path = path.rstrip('/')
 
     def save(self):
         ''' Save model weights and history using the provided path. '''
