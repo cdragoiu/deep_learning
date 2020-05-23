@@ -12,7 +12,7 @@ def train_test_split(path, ratio):
         ratio: percentage of files to be used for training
     '''
 
-    abs_path = os.path.abspath(path.rstrip('/'))
+    abs_path = os.path.abspath(path)
     dir_names = ['train', 'test']
 
     # reset folder structure if present
